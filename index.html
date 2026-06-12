@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Password Recovery</title>
+  <style>
+    :root { --bg:#f8fafc; --card:#fff; --muted:#6b7280; --accent:#0ea5a4; }
+    body { margin:0; font-family:Inter,system-ui,Arial; background:var(--bg); color:#0f172a; display:flex; align-items:center; justify-content:center; height:100vh; }
+    .card { width:min(720px,92%); background:var(--card); border-radius:12px; padding:28px; box-shadow:0 6px 24px rgba(2,6,23,0.08); }
+    h1 { margin:0 0 8px 0; font-size:20px; }
+    p { margin:0 0 16px 0; color:var(--muted); }
+    .info { background:#f1fdfd; border:1px solid #cff7f6; padding:14px; border-radius:10px; display:flex; gap:12px; align-items:center; }
+    .label { font-weight:700; color:#064e4a; }
+    .value { font-family:monospace; color:#064e4a; word-break:break-all; }
+    .expired { color:#b91c1c; font-weight:700; }
+    .countdown { margin-top:12px; color:var(--muted); }
+    .actions { margin-top:18px; display:flex; gap:10px; }
+    .btn { padding:10px 14px; border-radius:8px; border:0; cursor:pointer; font-weight:600; }
+    .btn-primary { background:var(--accent); color:white; }
+    .btn-secondary { background:#eef2ff; color:#3730a3; }
+    footer { margin-top:18px; color:var(--muted); font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="card" id="app">
+    <h1>Password Recovery</h1>
+    <p>Use the code below to reset your password. This code will expire in 5 minutes.</p>
+
+    <div id="content">
+      <div id="noParams" class="info" style="display:none;">
+        <div>
+          <div class="label">No recovery data found</div>
+          <div class="value">Open the recovery link from your email.</div>
+        </div>
+      </div>
+
+      <div id="paramsBox" style="display:none;">
+        <div class="info">
+          <div style="flex:1">
+            <div class="label">User ID</div>
+            <div id="userId" class="value"></div>
+          </div>
+          <div style="flex:1">
+            <div class="label">Secret</div>
+            <div id="secret" class="value"></div>
+          </div>
+        </div>
+
+        <div class="countdown" id="countdown">Expires in 05:00</div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="copyBtn">Copy Secret</button>
+          <button class="btn btn-secondary" id="clearBtn">Clear Now</button>
+        </div>
+      </div>
+
+      <div id="expiredBox" style="display:none;">
+        <div class="info">
+          <div>
+            <div class="label expired">Recovery link expired</div>
+            <div class="value">Request a new recovery email from the app.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      This page only displays the recovery values temporarily and does not store them on the server.
+    </footer>
+  </div>
+
+  <script>
+    // Read query params
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get('userId') || params.get('user_id') || '';
+    const secret = params.get('secret') || '';
+    const paramsBox = document.getElementById('paramsBox');
+    const noParams = document.getElementById('noParams');
+    const expiredBox = document.getElementById('expiredBox');
+    const userIdEl = document.getElementById('userId');
+    const secretEl = document.getElementById('secret');
+    const countdownEl = document.getElementById('countdown');
+    const copyBtn = document.getElementById('copyBtn');
+    const clearBtn = document.getElementById('clearBtn');
+
+    // 5 minutes in seconds
+    const TTL = 5 * 60;
+    let remaining = TTL;
+    let timer;
+
+    function startTimer() {
+      updateCountdown();
+      timer = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(timer);
+          expire();
+        } else {
+          updateCountdown();
+        }
+      }, 1000);
+    }
+
+    function updateCountdown() {
+      const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const ss = String(remaining % 60).padStart(2, '0');
+      countdownEl.textContent = `Expires in ${mm}:${ss}`;
+    }
+
+    function expire() {
+      // Clear displayed values
+      userIdEl.textContent = '';
+      secretEl.textContent = '';
+      paramsBox.style.display = 'none';
+      expiredBox.style.display = 'block';
+      // Remove sensitive info from URL (replace state)
+      try {
+        const url = new URL(window.location.href);
+        url.search = '';
+        window.history.replaceState({}, document.title, url.toString());
+      } catch (e) {}
+    }
+
+    if (!userId || !secret) {
+      noParams.style.display = 'block';
+    } else {
+      userIdEl.textContent = userId;
+      secretEl.textContent = secret;
+      paramsBox.style.display = 'block';
+      // Remove query params from URL immediately to avoid leaks in logs/referrers
+      try {
+        const url = new URL(window.location.href);
+        url.search = '';
+        window.history.replaceState({}, document.title, url.toString());
+      } catch (e) {}
+      startTimer();
+    }
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(secret);
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => copyBtn.textContent = 'Copy Secret', 2000);
+      } catch (e) {
+        copyBtn.textContent = 'Copy Failed';
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      if (timer) clearInterval(timer);
+      expire();
+    });
+
+    // Prevent caching by proxies
+    if ('serviceWorker' in navigator) {
+      // no-op: do not register SW here to avoid caching sensitive pages
+    }
+  </script>
+</body>
+</html>
