@@ -163,7 +163,7 @@
 <body>
   <div class="card">
     <h1>Reset Password</h1>
-    <p id="dynamicInstructions">Redirecting you back to the mobile app layout securely...</p>
+    <p id="dynamicInstructions">Redirecting you back to your local development web app securely...</p>
 
     <div id="infoBox" class="box">
       <span class="label">Status</span>
@@ -192,7 +192,7 @@
     </form>
 
     <div class="small">
-      If you are not automatically redirected, please verify that you have the application installed on your device.
+      If you are not automatically redirected, please verify that your local web server is running at localhost:8081.
     </div>
   </div>
 
@@ -229,20 +229,21 @@
       successBox.classList.add("hidden");
     }
 
-    // Modern Deep Link Bridge Redirection Setup
+    // Web Localhost Redirect Setup
     if (!userId || !secret) {
       infoText.textContent = "Data structure mismatch. Please access this page using the original email link.";
       showError("Invalid link metadata.");
     } else {
       infoText.textContent = "Handshake parameters accepted.";
       
-      // Automatic redirection to your Expo App using the updated lowercase scheme
-      const appDeepLink = `vitalityapp://auth/reset-password?userId=${userId}&secret=${secret}`;
+      // Automatic redirection to your local Expo web development environment.
+      // (Change 8081 if your local terminal shows a different port number like 8082)
+      const appDeepLink = `http://localhost:8081/auth/reset-password?userId=${userId}&secret=${secret}`;
       window.location.href = appDeepLink;
 
-      // Fallback UI safety timer (If deep link fails because they are on desktop or app missing)
+      // Fallback UI safety timer (If localhost isn't running, it displays the standard backup web form)
       setTimeout(() => {
-        dynamicInstructions.textContent = "Use this backup form if the application failed to boot automatically.";
+        dynamicInstructions.textContent = "Use this backup form if your local environment failed to respond.";
         resetForm.classList.remove("hidden");
       }, 2000);
     }
@@ -273,7 +274,7 @@
 
       try {
         await account.updateRecovery(userId, secret, password);
-        successBox.textContent = "Password updated! You can close this window now and log into the app.";
+        successBox.textContent = "Password updated! You can now log into your web app layout.";
         successBox.classList.remove("hidden");
         resetForm.reset();
       } catch (error) {
