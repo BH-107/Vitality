@@ -19,11 +19,7 @@
       --error-bg: #fee2e2;
       --error-text: #991b1b;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
@@ -35,7 +31,6 @@
       justify-content: center;
       padding: 20px;
     }
-
     .card {
       width: min(520px, 100%);
       background: var(--card);
@@ -43,180 +38,77 @@
       padding: 28px;
       box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
     }
-
-    h1 {
-      margin: 0 0 8px 0;
-      font-size: 24px;
-    }
-
-    p {
-      margin: 0 0 18px 0;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .box {
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
-      background: #fff;
-    }
-
-    .error {
-      background: var(--error-bg);
-      color: var(--error-text);
-      border-color: #fecaca;
-      font-weight: 600;
-    }
-
-    .success {
-      background: var(--success-bg);
-      color: var(--success-text);
-      border-color: #bbf7d0;
-      font-weight: 600;
-    }
-
-    .input-group {
-      position: relative;
-      margin-bottom: 14px;
-    }
-
-    .input {
-      width: 100%;
-      height: 56px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 0 46px 0 16px;
-      font-size: 16px;
-      color: #111827;
-      outline: none;
-      background: #fff;
-    }
-
-    .input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.12);
-    }
-
-    .toggle {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: 0;
-      background: transparent;
-      cursor: pointer;
-      color: var(--muted);
-      font-size: 18px;
-      padding: 0;
-    }
-
-    .button {
-      width: 100%;
-      height: 56px;
-      border: 0;
-      border-radius: 14px;
-      background: var(--accent);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .button:disabled {
-      opacity: 0.75;
-      cursor: not-allowed;
-    }
-
-    .small {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 14px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .row {
-      display: grid;
-      gap: 12px;
-    }
-
-    .label {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      word-break: break-all;
-    }
+    h1 { margin: 0 0 8px 0; font-size: 24px; }
+    p { margin: 0 0 18px 0; color: var(--muted); line-height: 1.6; }
+    .box { border-radius: 14px; padding: 14px; margin-bottom: 16px; border: 1px solid var(--border); background: #fff; }
+    .error { background: var(--error-bg); color: var(--error-text); border-color: #fecaca; font-weight: 600; }
+    .success { background: var(--success-bg); color: var(--success-text); border-color: #bbf7d0; font-weight: 600; }
+    .input-group { position: relative; margin-bottom: 14px; }
+    .input { width: 100%; height: 56px; border: 1px solid var(--border); border-radius: 14px; padding: 0 46px 0 16px; font-size: 16px; color: #111827; outline: none; background: #fff; }
+    .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.12); }
+    .toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; cursor: pointer; color: var(--muted); font-size: 18px; padding: 0; }
+    .button { width: 100%; height: 56px; border: 0; border-radius: 14px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .button:disabled { opacity: 0.75; cursor: not-allowed; }
+    .small { font-size: 13px; color: var(--muted); margin-top: 14px; }
+    .hidden { display: none; }
+    .row { display: grid; gap: 12px; }
+    .label { font-size: 13px; color: var(--muted); margin-bottom: 6px; display: block; }
+    .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; word-break: break-all; }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>Reset Password</h1>
-    <p>Use the recovery link from your email to set a new password. The secret is never shown on this page.</p>
+    <p id="dynamicInstructions">Redirecting you back to the mobile app layout securely...</p>
 
     <div id="infoBox" class="box">
-      <span class="label">Recovery link status</span>
-      <div id="infoText" class="code">Checking link...</div>
+      <span class="label">Status</span>
+      <div id="infoText" class="code">Syncing verification elements...</div>
     </div>
 
     <div id="errorBox" class="box error hidden"></div>
     <div id="successBox" class="box success hidden"></div>
 
-    <form id="resetForm" autocomplete="off">
+    <form id="resetForm" autocomplete="off" class="hidden">
       <div class="row">
         <div class="input-group">
           <span class="label">New Password</span>
           <input id="password" class="input" type="password" placeholder="Enter new password" minlength="8" />
           <button type="button" id="togglePassword" class="toggle">👁</button>
         </div>
-
         <div class="input-group">
           <span class="label">Confirm Password</span>
           <input id="confirmPassword" class="input" type="password" placeholder="Confirm new password" minlength="8" />
           <button type="button" id="toggleConfirmPassword" class="toggle">👁</button>
         </div>
       </div>
-
-      <button id="submitBtn" class="button" type="submit">Reset Password</button>
+      <button id="submitBtn" class="button" type="submit" style="margin-top: 15px;">Reset Password</button>
     </form>
 
     <div class="small">
-      After a successful reset, you can return to the app and log in with the new password.
+      If you are not automatically redirected, please verify that you have the application installed on your device.
     </div>
   </div>
 
   <script type="module">
     import { Client, Account } from "https://cdn.jsdelivr.net/npm/appwrite/+esm";
 
+    // Update with your real project configurations
     const APPWRITE_ENDPOINT = "https://cloud.appwrite.io/v1";
-    const APPWRITE_PROJECT_ID = "YOUR_PROJECT_ID";
+    const APPWRITE_PROJECT_ID = "YOUR_PROJECT_ID"; 
 
-    const client = new Client()
-      .setEndpoint(APPWRITE_ENDPOINT)
-      .setProject(APPWRITE_PROJECT_ID);
-
+    const client = new Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
     const account = new Account(client);
 
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("userId") || params.get("user_id") || "";
     const secret = params.get("secret") || "";
 
-    const infoBox = document.getElementById("infoBox");
     const infoText = document.getElementById("infoText");
     const errorBox = document.getElementById("errorBox");
     const successBox = document.getElementById("successBox");
     const resetForm = document.getElementById("resetForm");
+    const dynamicInstructions = document.getElementById("dynamicInstructions");
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirmPassword");
     const submitBtn = document.getElementById("submitBtn");
@@ -229,67 +121,37 @@
       successBox.classList.add("hidden");
     }
 
-    function showSuccess(message) {
-      successBox.textContent = message;
-      successBox.classList.remove("hidden");
-      errorBox.classList.add("hidden");
-    }
-
-    function clearMessages() {
-      errorBox.classList.add("hidden");
-      successBox.classList.add("hidden");
-      errorBox.textContent = "";
-      successBox.textContent = "";
-    }
-
-    function removeSensitiveParamsFromUrl() {
-      try {
-        const cleanUrl = window.location.origin + window.location.pathname;
-        window.history.replaceState({}, document.title, cleanUrl);
-      } catch (_) {}
-    }
-
+    // Modern Deep Link Bridge Redirection Setup
     if (!userId || !secret) {
-      infoText.textContent = "Missing recovery data. Open the link from your email.";
-      showError("Invalid recovery link.");
-      resetForm.style.display = "none";
+      infoText.textContent = "Data structure mismatch. Please access this page using the original email link.";
+      showError("Invalid link metadata.");
     } else {
-      infoText.textContent = "Recovery link received. Set a new password below.";
-      removeSensitiveParamsFromUrl();
+      infoText.textContent = "Handshake parameters accepted.";
+      
+      // Fire deep link redirect scheme into mobile OS instantly
+      const appDeepLink = `vitality://auth/reset-password?userId=${userId}&secret=${secret}`;
+      window.location.href = appDeepLink;
+
+      // Fallback UI safety timer (If deep link fails because they are on desktop or app missing)
+      setTimeout(() => {
+        dynamicInstructions.textContent = "Use this backup form if the application failed to boot automatically.";
+        resetForm.classList.remove("hidden");
+      }, 2000);
     }
 
     togglePassword.addEventListener("click", () => {
       passwordInput.type = passwordInput.type === "password" ? "text" : "password";
     });
-
     toggleConfirmPassword.addEventListener("click", () => {
       confirmPasswordInput.type = confirmPasswordInput.type === "password" ? "text" : "password";
     });
 
-    passwordInput.addEventListener("input", clearMessages);
-    confirmPasswordInput.addEventListener("input", clearMessages);
-
     resetForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      clearMessages();
-
+      errorBox.classList.add("hidden");
+      
       const password = passwordInput.value.trim();
       const confirmPassword = confirmPasswordInput.value.trim();
-
-      if (!userId || !secret) {
-        showError("Recovery data is missing. Please open the email link again.");
-        return;
-      }
-
-      if (!password || !confirmPassword) {
-        showError("Please fill in both password fields.");
-        return;
-      }
-
-      if (password.length < 8) {
-        showError("Password must be at least 8 characters long.");
-        return;
-      }
 
       if (password !== confirmPassword) {
         showError("Passwords do not match.");
@@ -297,21 +159,15 @@
       }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = "Resetting...";
+      submitBtn.textContent = "Processing...";
 
       try {
-        await account.updateRecovery(userId, secret, password, confirmPassword);
-
-        showSuccess("Your password has been reset successfully. You can now return to the app and log in.");
+        await account.updateRecovery(userId, secret, password);
+        successBox.textContent = "Password updated! You can close this window now.";
+        successBox.classList.remove("hidden");
         resetForm.reset();
       } catch (error) {
-        if (error?.code === 401 || error?.code === 404) {
-          showError("Invalid or expired recovery link. Please request a new one.");
-        } else if (error?.code === 400) {
-          showError(error?.message || "Invalid request.");
-        } else {
-          showError(error?.message || "An unexpected error occurred.");
-        }
+        showError(error?.message || "Recovery validation failed.");
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Reset Password";
