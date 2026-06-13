@@ -3,159 +3,320 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Password Recovery</title>
+  <title>Reset Password</title>
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <style>
-    :root { --bg:#f8fafc; --card:#fff; --muted:#6b7280; --accent:#0ea5a4; }
-    body { margin:0; font-family:Inter,system-ui,Arial; background:var(--bg); color:#0f172a; display:flex; align-items:center; justify-content:center; height:100vh; }
-    .card { width:min(720px,92%); background:var(--card); border-radius:12px; padding:28px; box-shadow:0 6px 24px rgba(2,6,23,0.08); }
-    h1 { margin:0 0 8px 0; font-size:20px; }
-    p { margin:0 0 16px 0; color:var(--muted); }
-    .info { background:#f1fdfd; border:1px solid #cff7f6; padding:14px; border-radius:10px; display:flex; gap:12px; align-items:center; }
-    .label { font-weight:700; color:#064e4a; }
-    .value { font-family:monospace; color:#064e4a; word-break:break-all; }
-    .expired { color:#b91c1c; font-weight:700; }
-    .countdown { margin-top:12px; color:var(--muted); }
-    .actions { margin-top:18px; display:flex; gap:10px; }
-    .btn { padding:10px 14px; border-radius:8px; border:0; cursor:pointer; font-weight:600; }
-    .btn-primary { background:var(--accent); color:white; }
-    .btn-secondary { background:#eef2ff; color:#3730a3; }
-    footer { margin-top:18px; color:var(--muted); font-size:13px; }
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #0ea5a4;
+      --border: #d1d5db;
+      --success-bg: #d1fae5;
+      --success-text: #065f46;
+      --error-bg: #fee2e2;
+      --error-text: #991b1b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: min(520px, 100%);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 0 0 18px 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .box {
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .error {
+      background: var(--error-bg);
+      color: var(--error-text);
+      border-color: #fecaca;
+      font-weight: 600;
+    }
+
+    .success {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border-color: #bbf7d0;
+      font-weight: 600;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .input {
+      width: 100%;
+      height: 56px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0 46px 0 16px;
+      font-size: 16px;
+      color: #111827;
+      outline: none;
+      background: #fff;
+    }
+
+    .input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.12);
+    }
+
+    .toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 18px;
+      padding: 0;
+    }
+
+    .button {
+      width: 100%;
+      height: 56px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .button:disabled {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .row {
+      display: grid;
+      gap: 12px;
+    }
+
+    .label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      word-break: break-all;
+    }
   </style>
 </head>
 <body>
-  <div class="card" id="app">
-    <h1>Password Recovery</h1>
-    <p>Use the code below to reset your password. This code will expire in 5 minutes.</p>
+  <div class="card">
+    <h1>Reset Password</h1>
+    <p>Use the recovery link from your email to set a new password. The secret is never shown on this page.</p>
 
-    <div id="content">
-      <div id="noParams" class="info" style="display:none;">
-        <div>
-          <div class="label">No recovery data found</div>
-          <div class="value">Open the recovery link from your email.</div>
-        </div>
-      </div>
-
-      <div id="paramsBox" style="display:none;">
-        <div class="info">
-          <div style="flex:1">
-            <div class="label">User ID</div>
-            <div id="userId" class="value"></div>
-          </div>
-          <div style="flex:1">
-            <div class="label">Secret</div>
-            <div id="secret" class="value"></div>
-          </div>
-        </div>
-
-        <div class="countdown" id="countdown">Expires in 05:00</div>
-
-        <div class="actions">
-          <button class="btn btn-primary" id="copyBtn">Copy Secret</button>
-          <button class="btn btn-secondary" id="clearBtn">Clear Now</button>
-        </div>
-      </div>
-
-      <div id="expiredBox" style="display:none;">
-        <div class="info">
-          <div>
-            <div class="label expired">Recovery link expired</div>
-            <div class="value">Request a new recovery email from the app.</div>
-          </div>
-        </div>
-      </div>
+    <div id="infoBox" class="box">
+      <span class="label">Recovery link status</span>
+      <div id="infoText" class="code">Checking link...</div>
     </div>
 
-    <footer>
-      This page only displays the recovery values temporarily and does not store them on the server.
-    </footer>
+    <div id="errorBox" class="box error hidden"></div>
+    <div id="successBox" class="box success hidden"></div>
+
+    <form id="resetForm" autocomplete="off">
+      <div class="row">
+        <div class="input-group">
+          <span class="label">New Password</span>
+          <input id="password" class="input" type="password" placeholder="Enter new password" minlength="8" />
+          <button type="button" id="togglePassword" class="toggle">👁</button>
+        </div>
+
+        <div class="input-group">
+          <span class="label">Confirm Password</span>
+          <input id="confirmPassword" class="input" type="password" placeholder="Confirm new password" minlength="8" />
+          <button type="button" id="toggleConfirmPassword" class="toggle">👁</button>
+        </div>
+      </div>
+
+      <button id="submitBtn" class="button" type="submit">Reset Password</button>
+    </form>
+
+    <div class="small">
+      After a successful reset, you can return to the app and log in with the new password.
+    </div>
   </div>
 
-  <script>
-    // Read query params
+  <script type="module">
+    import { Client, Account } from "https://cdn.jsdelivr.net/npm/appwrite/+esm";
+
+    const APPWRITE_ENDPOINT = "https://cloud.appwrite.io/v1";
+    const APPWRITE_PROJECT_ID = "YOUR_PROJECT_ID";
+
+    const client = new Client()
+      .setEndpoint(APPWRITE_ENDPOINT)
+      .setProject(APPWRITE_PROJECT_ID);
+
+    const account = new Account(client);
+
     const params = new URLSearchParams(window.location.search);
-    const userId = params.get('userId') || params.get('user_id') || '';
-    const secret = params.get('secret') || '';
-    const paramsBox = document.getElementById('paramsBox');
-    const noParams = document.getElementById('noParams');
-    const expiredBox = document.getElementById('expiredBox');
-    const userIdEl = document.getElementById('userId');
-    const secretEl = document.getElementById('secret');
-    const countdownEl = document.getElementById('countdown');
-    const copyBtn = document.getElementById('copyBtn');
-    const clearBtn = document.getElementById('clearBtn');
+    const userId = params.get("userId") || params.get("user_id") || "";
+    const secret = params.get("secret") || "";
 
-    // 5 minutes in seconds
-    const TTL = 5 * 60;
-    let remaining = TTL;
-    let timer;
+    const infoBox = document.getElementById("infoBox");
+    const infoText = document.getElementById("infoText");
+    const errorBox = document.getElementById("errorBox");
+    const successBox = document.getElementById("successBox");
+    const resetForm = document.getElementById("resetForm");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const submitBtn = document.getElementById("submitBtn");
+    const togglePassword = document.getElementById("togglePassword");
+    const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
 
-    function startTimer() {
-      updateCountdown();
-      timer = setInterval(() => {
-        remaining--;
-        if (remaining <= 0) {
-          clearInterval(timer);
-          expire();
-        } else {
-          updateCountdown();
-        }
-      }, 1000);
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.classList.remove("hidden");
+      successBox.classList.add("hidden");
     }
 
-    function updateCountdown() {
-      const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
-      const ss = String(remaining % 60).padStart(2, '0');
-      countdownEl.textContent = `Expires in ${mm}:${ss}`;
+    function showSuccess(message) {
+      successBox.textContent = message;
+      successBox.classList.remove("hidden");
+      errorBox.classList.add("hidden");
     }
 
-    function expire() {
-      // Clear displayed values
-      userIdEl.textContent = '';
-      secretEl.textContent = '';
-      paramsBox.style.display = 'none';
-      expiredBox.style.display = 'block';
-      // Remove sensitive info from URL (replace state)
+    function clearMessages() {
+      errorBox.classList.add("hidden");
+      successBox.classList.add("hidden");
+      errorBox.textContent = "";
+      successBox.textContent = "";
+    }
+
+    function removeSensitiveParamsFromUrl() {
       try {
-        const url = new URL(window.location.href);
-        url.search = '';
-        window.history.replaceState({}, document.title, url.toString());
-      } catch (e) {}
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      } catch (_) {}
     }
 
     if (!userId || !secret) {
-      noParams.style.display = 'block';
+      infoText.textContent = "Missing recovery data. Open the link from your email.";
+      showError("Invalid recovery link.");
+      resetForm.style.display = "none";
     } else {
-      userIdEl.textContent = userId;
-      secretEl.textContent = secret;
-      paramsBox.style.display = 'block';
-      // Remove query params from URL immediately to avoid leaks in logs/referrers
-      try {
-        const url = new URL(window.location.href);
-        url.search = '';
-        window.history.replaceState({}, document.title, url.toString());
-      } catch (e) {}
-      startTimer();
+      infoText.textContent = "Recovery link received. Set a new password below.";
+      removeSensitiveParamsFromUrl();
     }
 
-    copyBtn.addEventListener('click', async () => {
+    togglePassword.addEventListener("click", () => {
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    });
+
+    toggleConfirmPassword.addEventListener("click", () => {
+      confirmPasswordInput.type = confirmPasswordInput.type === "password" ? "text" : "password";
+    });
+
+    passwordInput.addEventListener("input", clearMessages);
+    confirmPasswordInput.addEventListener("input", clearMessages);
+
+    resetForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearMessages();
+
+      const password = passwordInput.value.trim();
+      const confirmPassword = confirmPasswordInput.value.trim();
+
+      if (!userId || !secret) {
+        showError("Recovery data is missing. Please open the email link again.");
+        return;
+      }
+
+      if (!password || !confirmPassword) {
+        showError("Please fill in both password fields.");
+        return;
+      }
+
+      if (password.length < 8) {
+        showError("Password must be at least 8 characters long.");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showError("Passwords do not match.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Resetting...";
+
       try {
-        await navigator.clipboard.writeText(secret);
-        copyBtn.textContent = 'Copied';
-        setTimeout(() => copyBtn.textContent = 'Copy Secret', 2000);
-      } catch (e) {
-        copyBtn.textContent = 'Copy Failed';
+        await account.updateRecovery(userId, secret, password, confirmPassword);
+
+        showSuccess("Your password has been reset successfully. You can now return to the app and log in.");
+        resetForm.reset();
+      } catch (error) {
+        if (error?.code === 401 || error?.code === 404) {
+          showError("Invalid or expired recovery link. Please request a new one.");
+        } else if (error?.code === 400) {
+          showError(error?.message || "Invalid request.");
+        } else {
+          showError(error?.message || "An unexpected error occurred.");
+        }
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Reset Password";
       }
     });
-
-    clearBtn.addEventListener('click', () => {
-      if (timer) clearInterval(timer);
-      expire();
-    });
-
-    // Prevent caching by proxies
-    if ('serviceWorker' in navigator) {
-      // no-op: do not register SW here to avoid caching sensitive pages
-    }
   </script>
 </body>
 </html>
